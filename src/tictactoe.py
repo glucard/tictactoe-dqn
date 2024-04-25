@@ -77,9 +77,18 @@ class TicTacToe:
     def notFinished(self):
         return self.turn_count < 9 and self.winner() == '-'
 
-    def Render(encode):
+    def render(encoded):
         game = TicTacToe()
         for i in range(3):
             for j in range(3):
-                game.table[i][j] = encode[i*3+j:i*3+j+1]
+                game.table[i][j] = encoded[i*3+j:i*3+j+1]
         return game
+
+def decode(encoded_state):
+    t = []
+    for i in range(3):
+        t_line = []
+        for j in range(3):
+            t_line.append(encoded_state[i*3+j])
+        t.append(t_line)
+    return t
