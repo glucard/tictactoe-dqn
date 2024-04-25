@@ -1,5 +1,6 @@
-import tictactoe
-import random, copy
+from .tictactoe import TicTacToe
+import copy, os
+import json
 from collections import Counter
 
 def listOfActions():
@@ -16,7 +17,7 @@ class TictactocStates():
     def reset(self):
         self.actions = listOfActions()
         self.states = []
-        game_start_state = tictactoe.TicTacToe()
+        game_start_state = TicTacToe()
         self.stateGenerator(game_start_state)
         for state in self.states:
             self.canWin(state)
@@ -57,11 +58,11 @@ class TictactocStates():
 
     def stateGenerator(self, game_state):
         encoded = game_state.encode()
-        exist, id = self.find(game_state)
+        exist, id = self.find(encoded)
+
         if id % 1_000 == 0:
             print(id)
-        """ if id > 10_000:
-            return 0 """
+            
         if not exist:
             done = not game_state.notFinished()
             state_element = {
@@ -84,7 +85,10 @@ class TictactocStates():
 
 def generate_states():
     tstates = TictactocStates()
-    textfile = open("states.txt", "w")
+    if not os.path.exists("data"):
+        os.mkdir("data")
+    
+    textfile = open("data/states.txt", "w")
     for element in tstates.states:
         textfile.write("id: " + str(element['id']) + "\n")
         textfile.write("encoded: " + element['encoded'] + "\n")
@@ -94,6 +98,14 @@ def generate_states():
         textfile.write("turn: " + str(element['turn']) + "\n")
         textfile.write("winner: " + str(element['winner']) + "\n" + "\n")
     textfile.close()
+
+    file_dict = {
+        "states": tstates.states
+    }
+    
+    with open("data/states.json", "w") as outfile: 
+        json.dump(file_dict, outfile)
+
 
 if __name__ == "__main__":
     generate_states()
